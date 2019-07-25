@@ -56,7 +56,7 @@
 							<!-- 生成的manifest中classpath的前缀，因为要把第三方jar放到lib目录下，所以classpath的前缀是lib/ -->
 							<classpathPrefix>../lib/</classpathPrefix>
 							<!-- 应用的main class -->
-							<mainClass>com.pkgs.ServiceApp</mainClass>
+							<mainClass>com.pkgs.museum.ServiceApp</mainClass>
 						</manifest>
 					</archive>
 					<!-- 过滤掉不希望包含在jar中的配置文件 -->
