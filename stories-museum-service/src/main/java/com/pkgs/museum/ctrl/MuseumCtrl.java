@@ -22,6 +22,12 @@ public class MuseumCtrl {
     private static Logger logger = LoggerFactory.getLogger(MuseumCtrl.class);
 
 
+    /**
+     * 事件接口
+     *
+     * @param request  请求
+     * @param response 反馈
+     */
     @RequestMapping("/enter")
     public void enter(HttpServletRequest request, HttpServletResponse response) {
         try (ServletInputStream stream = request.getInputStream()) {
