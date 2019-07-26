@@ -4,6 +4,8 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * 自定义线程工厂
+ *
  * @author huanghuapeng create at 2019/7/26 17:21
  * @version 1.0.0
  */
@@ -21,6 +23,9 @@ public class ThreadFactoryUtil {
     }
 
 
+    /**
+     * 自定义线程工厂
+     */
     private static class MyThreadFactory implements ThreadFactory {
 
         private String factoryName;

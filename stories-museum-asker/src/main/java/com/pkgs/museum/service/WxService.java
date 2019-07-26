@@ -1,6 +1,6 @@
 package com.pkgs.museum.service;
 
-import com.pkgs.museum.handler.WxHandler;
+import com.pkgs.museum.handler.WxServiceHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,9 +16,9 @@ public class WxService {
 
 
         for (int index = 0; index < 5; index++) {
-            WxHandler.sendTextMessage("oX1LUwPSirpY4DxJy2ELVN1PLyJo", String.valueOf(System.currentTimeMillis()));
-            WxHandler.sendImageMessage("oX1LUwPSirpY4DxJy2ELVN1PLyJo", "0gMh9eWwz6iY3b6tHG9vyOwcsqFtyRRUPFSFEe9Pp1i_rGyvoBHOHvoc7adU3mXA");
-            WxHandler.sendNewsMessage("oX1LUwPSirpY4DxJy2ELVN1PLyJo", "1234", "5678", "www.bing.com", "http://www.72xit.com/wp-content/uploads/2014/04/mysql.jpg");
+            WxServiceHandler.sendTextMessage("oX1LUwPSirpY4DxJy2ELVN1PLyJo", String.valueOf(System.currentTimeMillis()));
+            WxServiceHandler.sendImageMessage("oX1LUwPSirpY4DxJy2ELVN1PLyJo", "0gMh9eWwz6iY3b6tHG9vyOwcsqFtyRRUPFSFEe9Pp1i_rGyvoBHOHvoc7adU3mXA");
+            WxServiceHandler.sendNewsMessage("oX1LUwPSirpY4DxJy2ELVN1PLyJo", "1234", "5678", "www.bing.com", "http://www.72xit.com/wp-content/uploads/2014/04/mysql.jpg");
 
             try {
                 Thread.sleep(30000);

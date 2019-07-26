@@ -11,7 +11,7 @@
 
     <groupId>stories-museum-asker</groupId>
     <artifactId>stories-museum-asker</artifactId>
-
+    <version>1.0.0</version>
 
     <dependencies>
         <dependency>

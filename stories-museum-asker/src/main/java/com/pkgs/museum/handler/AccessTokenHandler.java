@@ -1,10 +1,5 @@
 package com.pkgs.museum.handler;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.pkgs.museum.builder.AskUrlBuilder;
-import com.pkgs.museum.util.AskUtil;
-import com.pkgs.museum.util.StrUtil;
 import com.pkgs.museum.util.ThreadFactoryUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +13,9 @@ import java.util.concurrent.TimeUnit;
  * @author huanghuapeng create at 2019/7/26 17:10
  * @version 1.0.0
  */
-public class TokenHandler {
+public class AccessTokenHandler {
 
-    private static Logger logger = LoggerFactory.getLogger(TokenHandler.class);
+    private static Logger logger = LoggerFactory.getLogger(AccessTokenHandler.class);
 
     /**
      * 微信用户token
@@ -34,7 +29,7 @@ public class TokenHandler {
                 ThreadFactoryUtil.build("AccessTokenSchedulePool"));
 
         // 定时刷新
-        poolExecutor.scheduleAtFixedRate(TokenHandler::refreshToken, 0, 30, TimeUnit.MINUTES);
+        poolExecutor.scheduleAtFixedRate(AccessTokenHandler::refreshToken, 0, 30, TimeUnit.MINUTES);
     }
 
 
@@ -64,14 +59,16 @@ public class TokenHandler {
      * @return String
      */
     private static String getAccessTokenByAsk() {
-        String url = AskUrlBuilder.buildAccessTokenUrl();
-        String feedback = String.valueOf(AskUtil.get(url));
+        //String url = AskUrlBuilder.buildAccessTokenUrl();
+        //String feedback = String.valueOf(AskUtil.get(url));
+        //
+        //logger.info("Refresh access toke:{}", feedback);
+        //
+        //JSONObject object = JSON.parseObject(feedback);
+        //String accessToken = object.getString("access_token");
+        //
+        //return SysUtil.isEmpty(accessToken) ? "" : accessToken;
 
-        logger.info("Refresh access toke:{}", feedback);
-
-        JSONObject object = JSON.parseObject(feedback);
-        String accessToken = object.getString("access_token");
-
-        return StrUtil.isEmpty(accessToken) ? "" : accessToken;
+        return "23_0exs9wvjDejFHMOw8E-bZ86eWNUThOJiiqdzUi2H9Utv5AQCUSqLesOa01vfDBz46psB-bpw31IaNqZMrqpQb9oTTjPmUxb4ZSkdv251UWqctH9V4X6qbc21Fp0PWObEnokIZadzUJR_nBfSVZIdABAJNW";
     }
 }

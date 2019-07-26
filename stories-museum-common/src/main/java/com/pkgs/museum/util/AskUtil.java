@@ -1,10 +1,7 @@
 package com.pkgs.museum.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import ch.qos.logback.classic.Level;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -18,23 +15,22 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.ILoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Http request
  *
  * @author cs12110 create at 2019-07-25
  */
+@Slf4j
 public class AskUtil {
 
-    /**
-     * 日志类
-     */
-    private static final Logger logger = LoggerFactory.getLogger(AskUtil.class);
-
     static {
+        // 设置http的logger
         ch.qos.logback.classic.Logger httpLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger("org.apache.http");
         httpLogger.setLevel(Level.INFO);
     }
@@ -52,7 +48,6 @@ public class AskUtil {
     public static String get(String url) {
         String resultStr = null;
 
-        // client是否要关闭?
         CloseableHttpClient client = HttpClients.createDefault();
         HttpGet get = new HttpGet(url);
         setUserAgent(get);
@@ -64,11 +59,11 @@ public class AskUtil {
                 HttpEntity entity = result.getEntity();
                 resultStr = EntityUtils.toString(entity, "utf-8");
             } else {
-                logger.info("failure to get:{},{}", url, result.getStatusLine());
+                log.info("failure to get:{},{}", url, result.getStatusLine());
             }
             closeHttpClient(client);
         } catch (Exception e) {
-            logger.error("", e);
+            log.error("", e);
         }
 
         return resultStr;
@@ -79,7 +74,7 @@ public class AskUtil {
      *
      * @param url    url
      * @param params 查询参数
-     * @return R
+     * @return String
      */
     public static String post(String url, Map<String, String> params) {
         HttpPost post = new HttpPost(url);
@@ -93,13 +88,20 @@ public class AskUtil {
                 UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, "utf-8");
                 post.setEntity(entity);
             } catch (Exception e) {
-                logger.error("", e);
+                log.error("", e);
             }
         }
 
         return doPost(post);
     }
 
+    /**
+     * by post
+     *
+     * @param url     请求url
+     * @param content 请求参数内容
+     * @return String
+     */
     public static String post(String url, String content) {
         HttpPost post = new HttpPost(url);
         StringEntity stringEntity = new StringEntity(content, "utf-8");
@@ -108,6 +110,12 @@ public class AskUtil {
     }
 
 
+    /**
+     * 请求
+     *
+     * @param post http post
+     * @return String
+     */
     private static String doPost(HttpPost post) {
         String resultStr = null;
         setUserAgent(post);
@@ -119,11 +127,11 @@ public class AskUtil {
                 HttpEntity entity = result.getEntity();
                 resultStr = EntityUtils.toString(entity, "utf-8");
             } else {
-                logger.info("failure to post:{},{}", post.getURI(), result.getStatusLine());
+                log.info("failure to post:{},{}", post.getURI(), result.getStatusLine());
             }
             closeHttpClient(client);
         } catch (Exception e) {
-            logger.error("", e);
+            log.error("", e);
         }
 
         return resultStr;

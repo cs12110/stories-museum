@@ -6,7 +6,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.pkgs.museum.builder.MessageBuilder;
 import com.pkgs.museum.builder.AskUrlBuilder;
 import com.pkgs.museum.util.AskUtil;
-import com.pkgs.museum.util.StrUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,9 +16,9 @@ import java.util.List;
  * @author huanghuapeng create at 2019/7/26 9:53
  * @version 1.0.0
  */
-public class WxHandler {
+public class WxServiceHandler {
 
-    private static Logger logger = LoggerFactory.getLogger(WxHandler.class);
+    private static Logger logger = LoggerFactory.getLogger(WxServiceHandler.class);
 
     ///**
     // * 获取access token
@@ -35,7 +34,7 @@ public class WxHandler {
     //    JSONObject object = JSON.parseObject(feedback);
     //    String accessToken = object.getString("access_token");
     //
-    //    return StrUtil.isEmpty(accessToken) ? "" : accessToken;
+    //    return SysUtil.isEmpty(accessToken) ? "" : accessToken;
     //}
 
     /**
@@ -44,7 +43,7 @@ public class WxHandler {
      * @return List
      */
     public static List<String> getFollowUsers() {
-        String value = AskUtil.get(AskUrlBuilder.buildFollowUserUrl(TokenHandler.getAccessToken()));
+        String value = AskUtil.get(AskUrlBuilder.buildFollowUserUrl(AccessTokenHandler.getAccessToken()));
         JSONObject object = JSON.parseObject(value);
         JSONArray array = object.getJSONObject("data").getJSONArray("openid");
 
@@ -75,7 +74,7 @@ public class WxHandler {
      * @return Object
      */
     public static String getUserInfo(String openId) {
-        String token = TokenHandler.getAccessToken();
+        String token = AccessTokenHandler.getAccessToken();
         String value = AskUtil.get(AskUrlBuilder.buildUserInfoUrl(token, openId));
         logger.info("Get user:{} info:{} ", openId, value);
         return value;
@@ -129,7 +128,7 @@ public class WxHandler {
      * @return String
      */
     private static String sendMessage(String messageJSON) {
-        String token = TokenHandler.getAccessToken();
+        String token = AccessTokenHandler.getAccessToken();
         String url = AskUrlBuilder.buildSendMessageUrl(token);
         String result = AskUtil.post(url, messageJSON);
         logger.info("Send:{}, result:{}", messageJSON, result);
