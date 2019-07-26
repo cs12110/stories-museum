@@ -29,7 +29,9 @@
 
 ```java
 /**
-* 微信公众号接入接口
+* 微信公众号接入接口,与其他事件是同一个接口
+* <p>
+* 比如用户在公众号输入关键字的时候,会能通过try2Read方法获取到 orz
 *
 * @param request request
 * @return String
@@ -37,6 +39,12 @@
 @RequestMapping("/bigbang")
 @ResponseBody
 public Object bigbang(HttpServletRequest request) {
+    logger.info("Http method:{}", request.getMethod());
+    logger.info("Http url:{}", request.getRequestURI());
+
+    String reqValue = try2Read(request);
+    logger.info("\n{}", reqValue);
+
     Enumeration<String> parameterNames = request.getParameterNames();
     Map<String, Object> map = new HashMap<>();
     while (parameterNames.hasMoreElements()) {
@@ -44,39 +52,29 @@ public Object bigbang(HttpServletRequest request) {
         map.put(key, request.getParameter(key));
     }
 
-    logger.info(JSON.toJSONString(map, true));
+    logger.info("\n{}", JSON.toJSONString(map, true));
 
     return map.get("echostr");
 }
-```
 
-### 2.2 微信回调接口
-
-不知道在实际的有权限的操作里面,是不是可以给某些事件配置对应的回调接口,还是所有的调用都是通过同一个接口,然后得到消息体再自己进行区分.
-
-```java
 /**
-* 事件接口
+* 读取事件内容
 *
-* @param request  请求
-* @param response 反馈
+* @param request 请求
+* @return String
 */
-@RequestMapping("/enter")
-public void enter(HttpServletRequest request, HttpServletResponse response) {
+private String try2Read(HttpServletRequest request) {
+    StringBuilder builder = new StringBuilder();
     try (ServletInputStream stream = request.getInputStream()) {
         byte[] arr = new byte[1024];
         int len;
-
-        StringBuilder builder = new StringBuilder();
         while (-1 != (len = stream.read(arr))) {
             builder.append(new String(arr, 0, len));
         }
-        logger.info("{}", builder.toString());
-
-        response.getWriter().write("SUCCESS");
     } catch (Exception e) {
         logger.error("", e);
     }
+    return builder.toString();
 }
 ```
 
@@ -87,7 +85,68 @@ public void enter(HttpServletRequest request, HttpServletResponse response) {
 接口接受到微信传输过来的消息如下
 
 ```java
-2019-07-26 09:09:07 INFO  com.pkgs.museum.ctrl.MuseumCtrl:35 - {"URL":"https://mr3306.top/museum/museum/enter","ToUserName":"haiyan","FromUserName":"mr3306","CreateTime":20190726,"MsgType":"event","Event":"subscribe","Latitude":0,"Longitude":0,"Precision":0,"MsgId":1234}
+2019-07-26 16:12:29 INFO  com.pkgs.museum.ctrl.MuseumCtrl:57 - 
+<xml><ToUserName><![CDATA[gh_aa25bff261ad]]></ToUserName>
+<FromUserName><![CDATA[oX1LUwPSirpY4DxJy2ELVN1PLyJo]]></FromUserName>
+<CreateTime>1564128749</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[unsubscribe]]></Event>
+<EventKey><![CDATA[]]></EventKey>
+</xml>
+2019-07-26 16:12:29 INFO  com.pkgs.museum.ctrl.MuseumCtrl:66 - 
+{
+	"signature":"a24e385f6910233dbe2690227f18df19f34aee23",
+	"openid":"oX1LUwPSirpY4DxJy2ELVN1PLyJo",
+	"nonce":"451746180",
+	"timestamp":"1564128749"
+}
+2019-07-26 16:12:40 INFO  com.pkgs.museum.ctrl.MuseumCtrl:53 - Http method:POST
+2019-07-26 16:12:40 INFO  com.pkgs.museum.ctrl.MuseumCtrl:54 - Http url:/museum/bigbang
+2019-07-26 16:12:40 INFO  com.pkgs.museum.ctrl.MuseumCtrl:57 - 
+<xml><ToUserName><![CDATA[gh_aa25bff261ad]]></ToUserName>
+<FromUserName><![CDATA[oX1LUwPSirpY4DxJy2ELVN1PLyJo]]></FromUserName>
+<CreateTime>1564128760</CreateTime>
+<MsgType><![CDATA[event]]></MsgType>
+<Event><![CDATA[subscribe]]></Event>
+<EventKey><![CDATA[]]></EventKey>
+</xml>
+2019-07-26 16:12:40 INFO  com.pkgs.museum.ctrl.MuseumCtrl:66 - 
+{
+	"signature":"6e9410625ede92b9bb825a18bd9f853f9d912304",
+	"openid":"oX1LUwPSirpY4DxJy2ELVN1PLyJo",
+	"nonce":"1728347185",
+	"timestamp":"1564128760"
+}
+2019-07-26 16:12:46 INFO  com.pkgs.museum.ctrl.MuseumCtrl:53 - Http method:POST
+2019-07-26 16:12:46 INFO  com.pkgs.museum.ctrl.MuseumCtrl:54 - Http url:/museum/bigbang
+2019-07-26 16:12:46 INFO  com.pkgs.museum.ctrl.MuseumCtrl:57 - 
+<xml><ToUserName><![CDATA[gh_aa25bff261ad]]></ToUserName>
+<FromUserName><![CDATA[oX1LUwPSirpY4DxJy2ELVN1PLyJo]]></FromUserName>
+<CreateTime>1564128766</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[1234]]></Content>
+<MsgId>22392940488661025</MsgId>
+</xml>
+2019-07-26 16:12:46 INFO  com.pkgs.museum.ctrl.MuseumCtrl:66 - 
+{
+	"signature":"56823ec2ff7fe8b94d5e049ffed0244639fe7223",
+	"openid":"oX1LUwPSirpY4DxJy2ELVN1PLyJo",
+	"nonce":"954795297",
+	"timestamp":"1564128766"
+}
+```
+
+```java
+2019-07-26 17:07:19 INFO  com.pkgs.museum.ctrl.MuseumCtrl:35 - Http method:POST
+2019-07-26 17:07:19 INFO  com.pkgs.museum.ctrl.MuseumCtrl:36 - Http uri:/museum/bigbang
+2019-07-26 17:07:19 INFO  com.pkgs.museum.ctrl.MuseumCtrl:37 - Http url:http://127.0.0.1:7070/museum/bigbang
+2019-07-26 17:07:19 INFO  com.pkgs.museum.ctrl.MuseumCtrl:42 - Head host:127.0.0.1:7070
+2019-07-26 17:07:19 INFO  com.pkgs.museum.ctrl.MuseumCtrl:42 - Head connection:close
+2019-07-26 17:07:19 INFO  com.pkgs.museum.ctrl.MuseumCtrl:42 - Head content-length:278
+2019-07-26 17:07:19 INFO  com.pkgs.museum.ctrl.MuseumCtrl:42 - Head user-agent:Mozilla/4.0
+2019-07-26 17:07:19 INFO  com.pkgs.museum.ctrl.MuseumCtrl:42 - Head accept:*/*
+2019-07-26 17:07:19 INFO  com.pkgs.museum.ctrl.MuseumCtrl:42 - Head pragma:no-cache
+2019-07-26 17:07:19 INFO  com.pkgs.museum.ctrl.MuseumCtrl:42 - Head content-type:text/xml
 ```
 
 ---
