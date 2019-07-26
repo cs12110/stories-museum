@@ -21,34 +21,10 @@ public class MuseumCtrl {
 
     private static Logger logger = LoggerFactory.getLogger(MuseumCtrl.class);
 
-
     /**
-     * 事件接口
-     *
-     * @param request  请求
-     * @param response 反馈
-     */
-    @RequestMapping("/enter")
-    public void enter(HttpServletRequest request, HttpServletResponse response) {
-        try (ServletInputStream stream = request.getInputStream()) {
-            byte[] arr = new byte[1024];
-            int len;
-
-            StringBuilder builder = new StringBuilder();
-            while (-1 != (len = stream.read(arr))) {
-                builder.append(new String(arr, 0, len));
-            }
-            logger.info("{}", builder.toString());
-
-            response.getWriter().write("SUCCESS");
-        } catch (Exception e) {
-            logger.error("", e);
-        }
-    }
-
-
-    /**
-     * 微信公众号接入接口
+     * 微信公众号接入接口,与其他事件是同一个接口
+     * <p>
+     * 比如用户在公众号输入关键字的时候,会能通过try2Read方法获取到 orz
      *
      * @param request request
      * @return String
@@ -56,6 +32,19 @@ public class MuseumCtrl {
     @RequestMapping("/bigbang")
     @ResponseBody
     public Object bigbang(HttpServletRequest request) {
+        logger.info("Http method:{}", request.getMethod());
+        logger.info("Http uri:{}", request.getRequestURI());
+        logger.info("Http url:{}", request.getRequestURL());
+
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String h = headerNames.nextElement();
+            logger.info("Head {}:{}", h, request.getHeader(h));
+        }
+
+        String reqValue = try2Read(request);
+        logger.info("\n{}", reqValue);
+
         Enumeration<String> parameterNames = request.getParameterNames();
         Map<String, Object> map = new HashMap<>();
         while (parameterNames.hasMoreElements()) {
@@ -63,8 +52,28 @@ public class MuseumCtrl {
             map.put(key, request.getParameter(key));
         }
 
-        logger.info(JSON.toJSONString(map, true));
+        logger.info("\n{}", JSON.toJSONString(map, true));
 
         return map.get("echostr");
+    }
+
+    /**
+     * 读取事件内容
+     *
+     * @param request 请求
+     * @return String
+     */
+    private String try2Read(HttpServletRequest request) {
+        StringBuilder builder = new StringBuilder();
+        try (ServletInputStream stream = request.getInputStream()) {
+            byte[] arr = new byte[1024];
+            int len;
+            while (-1 != (len = stream.read(arr))) {
+                builder.append(new String(arr, 0, len));
+            }
+        } catch (Exception e) {
+            logger.error("", e);
+        }
+        return builder.toString();
     }
 }
