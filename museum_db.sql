@@ -11,17 +11,30 @@
  Target Server Version : 50718
  File Encoding         : 65001
 
- Date: 27/07/2019 12:25:11
+ Date: 27/07/2019 12:36:26
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for wx_auto_reply
+-- Table structure for t_sys_dict
 -- ----------------------------
-DROP TABLE IF EXISTS `wx_auto_reply`;
-CREATE TABLE `wx_auto_reply` (
+DROP TABLE IF EXISTS `t_sys_dict`;
+CREATE TABLE `t_sys_dict` (
+  `id` int(11) NOT NULL COMMENT 'id',
+  `dict_key` varchar(64) NOT NULL COMMENT 'key',
+  `dict_value` varchar(512) DEFAULT NULL COMMENT 'VALUE',
+  `status` tinyint(4) DEFAULT '0' COMMENT '状态,0:失效,1:有效',
+  `remark` varchar(128) DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统字典表';
+
+-- ----------------------------
+-- Table structure for t_wx_auto_reply
+-- ----------------------------
+DROP TABLE IF EXISTS `t_wx_auto_reply`;
+CREATE TABLE `t_wx_auto_reply` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `code` varchar(64) NOT NULL COMMENT '编码',
   `status` tinyint(2) NOT NULL DEFAULT '0' COMMENT '状态,0:失效,1:有效',
@@ -39,13 +52,13 @@ CREATE TABLE `wx_auto_reply` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `code` (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='微信自动回复内容表';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='微信自动回复内容表';
 
 -- ----------------------------
--- Table structure for wx_user_t
+-- Table structure for t_wx_user
 -- ----------------------------
-DROP TABLE IF EXISTS `wx_user_t`;
-CREATE TABLE `wx_user_t` (
+DROP TABLE IF EXISTS `t_wx_user`;
+CREATE TABLE `t_wx_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增id',
   `nickname` varchar(256) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '微信用户昵称',
   `open_id` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '微信用户openId',
