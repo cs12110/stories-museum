@@ -2,6 +2,8 @@ package com.pkgs.museum.handler.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.pkgs.museum.handler.EventHandler;
+import com.pkgs.museum.handler.WxServiceHandler;
+import com.pkgs.museum.util.SysUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,7 @@ public class SearchEventHandler implements EventHandler {
 
     @Override
     public Object dealWith(Map<String, String> eventMap) {
+        String fromUser = eventMap.get("FromUserName");
         String searchKey = eventMap.get("Content");
 
         // 对用户搜索内容继续回复操作
@@ -27,6 +30,25 @@ public class SearchEventHandler implements EventHandler {
         log.info(searchKey);
 
 
+        // 回馈用户搜索内容
+        String reply = getReply(searchKey);
+        WxServiceHandler.sendTextMessage(fromUser, reply);
+
         return null;
+    }
+
+
+    /**
+     * 获取回复内容
+     *
+     * @param key key
+     * @return String
+     */
+    private String getReply(String key) {
+        if (SysUtil.isEmpty(key)) {
+            return "请输入内容";
+        }
+
+        return "你输入的是: " + key;
     }
 }

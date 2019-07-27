@@ -62,6 +62,10 @@ public class FollowEventHandler implements EventHandler {
         String picUrl = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1564170859120&di=98c823f33e470662725f6d780f7191c1&imgtype=0&src=http%3A%2F%2Fg.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2F2e2eb9389b504fc2bbdd8ce9ebdde71191ef6d5f.jpg";
 
         WxServiceHandler.sendNewsMessage(formUser, title, desc, url, picUrl);
+
+
+        String message = "Hi,同时您可以输入关键字: \n\n1. music \n\n2. movie \n\n3. book \n\n来进行搜索:)";
+        WxServiceHandler.sendTextMessage(formUser, message);
     }
 
     /**

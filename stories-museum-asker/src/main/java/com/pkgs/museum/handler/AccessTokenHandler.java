@@ -69,6 +69,6 @@ public class AccessTokenHandler {
         //
         //return SysUtil.isEmpty(accessToken) ? "" : accessToken;
 
-        return "23_0exs9wvjDejFHMOw8E-bZ86eWNUThOJiiqdzUi2H9Utv5AQCUSqLesOa01vfDBz46psB-bpw31IaNqZMrqpQb9oTTjPmUxb4ZSkdv251UWqctH9V4X6qbc21Fp0PWObEnokIZadzUJR_nBfSVZIdABAJNW";
+        return "23_Jgit5Z21jq3K51DGAzOzJNyPNJKyT9LSXmAjThCeUa5FU5sgKFwXsABRGtJdTlCBqfYLCbopv0xDhG_HGkKUQzUDVmwOitDDXdFsrre1r2Ea0vKdwEABq8QvBje1WbT3Wb3_PSandUYtHnSAQGSbAHAFVH";
     }
 }
