@@ -10,3 +10,5 @@
 **/*.iml
 
 classes/**
+
+**/.DS_Store

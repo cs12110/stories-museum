@@ -1,11 +1,16 @@
 package com.pkgs.museum.handler.impl;
 
+import com.pkgs.museum.entity.wx.WxAutoReply;
 import com.pkgs.museum.enums.EventEnum;
 import com.pkgs.museum.handler.EventHandler;
 import com.pkgs.museum.handler.WxServiceHandler;
+import com.pkgs.museum.service.wx.WxAutoReplyService;
+import com.pkgs.museum.util.SysUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,6 +23,9 @@ import java.util.Map;
 @Slf4j
 @Service(value = "followEventHandler")
 public class FollowEventHandler implements EventHandler {
+
+    @Resource
+    private WxAutoReplyService wxAutoReplyService;
 
     @Override
     public Object dealWith(Map<String, String> eventMap) {
@@ -52,20 +60,18 @@ public class FollowEventHandler implements EventHandler {
      * @param eventMap eventMap
      */
     private void dealWithSubscribe(Map<String, String> eventMap) {
-
         String formUser = eventMap.get("FromUserName");
-
-
-        String title = "欢迎关注我们的公众号,May u have fun";
-        String desc = "这个一个关于故事的公众号";
-        String url = "https://github.com/cs12110/stories-museum";
-        String picUrl = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1564170859120&di=98c823f33e470662725f6d780f7191c1&imgtype=0&src=http%3A%2F%2Fg.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2F2e2eb9389b504fc2bbdd8ce9ebdde71191ef6d5f.jpg";
-
-        WxServiceHandler.sendNewsMessage(formUser, title, desc, url, picUrl);
-
-
-        String message = "Hi,同时您可以输入关键字: \n\n1. music \n\n2. movie \n\n3. book \n\n来进行搜索:)";
-        WxServiceHandler.sendTextMessage(formUser, message);
+        List<WxAutoReply> replies = wxAutoReplyService.findAutoReplyList();
+        if (!SysUtil.isEmpty(replies)) {
+            for (WxAutoReply reply : replies) {
+                // 文本消息
+                if (reply.getType() == 1) {
+                    WxServiceHandler.sendTextMessage(formUser, reply.getContent());
+                } else if (reply.getType() == 3) {
+                    WxServiceHandler.sendNewsMessage(formUser, reply.getTitle(), reply.getDescription(), reply.getUrl(), reply.getPicUrl());
+                }
+            }
+        }
     }
 
     /**
