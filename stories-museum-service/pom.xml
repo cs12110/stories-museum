@@ -1,93 +1,106 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>stories-museum</groupId>
-		<artifactId>stories-museum</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-	</parent>
-	<groupId>stories-museum-service</groupId>
-	<artifactId>stories-museum-service</artifactId>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>stories-museum</groupId>
+        <artifactId>stories-museum</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <groupId>stories-museum-service</groupId>
+    <artifactId>stories-museum-service</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>stories-museum-common</groupId>
+            <artifactId>stories-museum-common</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
-	<build>
-		<resources>
-			<!-- 控制资源文件的拷贝 -->
-			<resource>
-				<directory>src/main/resources</directory>
-				<targetPath>${project.build.directory}/classes</targetPath>
-			</resource>
+        <dependency>
+            <groupId>stories-museum-asker</groupId>
+            <artifactId>stories-museum-asker</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
 
-			<resource>
-				<directory>src/main/resources</directory>
-				<includes>
-					<include>**.xml</include>
-				</includes>
-			</resource>
-		</resources>
-		<plugins>
-			<!-- 设置源文件编码方式 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
-			<!-- The configuration of maven-jar-plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.4</version>
-				<!-- The configuration of the plugin -->
-				<configuration>
-					<!-- Configuration of the archiver -->
-					<archive>
-						<!-- 生成的jar中，不要包含pom.xml和pom.properties这两个文件 -->
-						<addMavenDescriptor>false</addMavenDescriptor>
+    <build>
+        <resources>
+            <!-- 控制资源文件的拷贝 -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>${project.build.directory}/classes</targetPath>
+            </resource>
 
-						<!-- Manifest specific configuration -->
-						<manifest>
-							<!-- 是否要把第三方jar放到manifest的classpath中 -->
-							<addClasspath>true</addClasspath>
-							<!-- 生成的manifest中classpath的前缀，因为要把第三方jar放到lib目录下，所以classpath的前缀是lib/ -->
-							<classpathPrefix>../lib/</classpathPrefix>
-							<!-- 应用的main class -->
-							<mainClass>com.pkgs.museum.ServiceApp</mainClass>
-						</manifest>
-					</archive>
-					<!-- 过滤掉不希望包含在jar中的配置文件 -->
-					<!--<excludes> <exclude>*.properties</exclude> <exclude>pkg/*.xml</exclude> 
-						</excludes> -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**.xml</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+            <!-- 设置源文件编码方式 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <!-- The configuration of maven-jar-plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <!-- The configuration of the plugin -->
+                <configuration>
+                    <!-- Configuration of the archiver -->
+                    <archive>
+                        <!-- 生成的jar中，不要包含pom.xml和pom.properties这两个文件 -->
+                        <addMavenDescriptor>false</addMavenDescriptor>
 
-				</configuration>
-			</plugin>
+                        <!-- Manifest specific configuration -->
+                        <manifest>
+                            <!-- 是否要把第三方jar放到manifest的classpath中 -->
+                            <addClasspath>true</addClasspath>
+                            <!-- 生成的manifest中classpath的前缀，因为要把第三方jar放到lib目录下，所以classpath的前缀是lib/ -->
+                            <classpathPrefix>../lib/</classpathPrefix>
+                            <!-- 应用的main class -->
+                            <mainClass>com.pkgs.museum.ServiceApp</mainClass>
+                        </manifest>
+                    </archive>
+                    <!-- 过滤掉不希望包含在jar中的配置文件 -->
+                    <!--<excludes> <exclude>*.properties</exclude> <exclude>pkg/*.xml</exclude>
+                        </excludes> -->
 
-			<!-- The configuration of maven-assembly-plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.4</version>
-				<!-- The configuration of the plugin -->
-				<configuration>
-					<!-- Specifies the configuration file of the assembly plugin -->
-					<descriptors>
-						<descriptor>src/main/resources/pkg/assembly.xml</descriptor>
-					</descriptors>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+                </configuration>
+            </plugin>
+
+            <!-- The configuration of maven-assembly-plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4</version>
+                <!-- The configuration of the plugin -->
+                <configuration>
+                    <!-- Specifies the configuration file of the assembly plugin -->
+                    <descriptors>
+                        <descriptor>src/main/resources/pkg/assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -1,25 +1,35 @@
 package com.pkgs.museum.ctrl;
 
 import com.alibaba.fastjson.JSON;
+import com.pkgs.museum.handler.WxEventDispatchHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 微信回调接口
+ *
+ * @author cs12110 create 2019-07-27
+ */
 @Controller
 @RequestMapping(value = "/museum/")
 public class MuseumCtrl {
 
 
     private static Logger logger = LoggerFactory.getLogger(MuseumCtrl.class);
+
+
+    @Resource
+    private WxEventDispatchHandler handler;
 
     /**
      * 微信公众号接入接口,与其他事件是同一个接口
@@ -32,16 +42,6 @@ public class MuseumCtrl {
     @RequestMapping("/bigbang")
     @ResponseBody
     public Object bigbang(HttpServletRequest request) {
-        logger.info("Http method:{}", request.getMethod());
-        logger.info("Http uri:{}", request.getRequestURI());
-        logger.info("Http url:{}", request.getRequestURL());
-
-        Enumeration<String> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String h = headerNames.nextElement();
-            logger.info("Head {}:{}", h, request.getHeader(h));
-        }
-
         String reqValue = try2Read(request);
         logger.info("\n{}", reqValue);
 
@@ -51,6 +51,8 @@ public class MuseumCtrl {
             String key = parameterNames.nextElement();
             map.put(key, request.getParameter(key));
         }
+
+        handler.dealWith(reqValue);
 
         logger.info("\n{}", JSON.toJSONString(map, true));
 

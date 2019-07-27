@@ -1,6 +1,8 @@
 package com.pkgs.museum.builder;
 
 /**
+ * message builder
+ *
  * @author huanghuapeng create at 2019/7/26 13:31
  * @version 1.0.0
  */
