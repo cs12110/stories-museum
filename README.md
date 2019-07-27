@@ -156,3 +156,14 @@ private String try2Read(HttpServletRequest request) {
 通用接口类型可以在这个页面找到相关文档: [link](https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140454)
 
 然后可以在这个页面上进行测试操作: [link](https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140454)
+
+
+---
+
+## 4. 支付接口
+
+支付流程参考博客: [link](https://blog.csdn.net/fight_man8866/article/details/79657562)
+
+因为没有相关条件来测试,现在只能熟悉流程了.微信支付接口流程
+
+![](imgs/pay.png)
