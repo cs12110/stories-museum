@@ -1,12 +1,14 @@
 package com.pkgs.museum.handler.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.pkgs.museum.entity.sys.SysDict;
 import com.pkgs.museum.handler.EventHandler;
 import com.pkgs.museum.handler.WxServiceHandler;
-import com.pkgs.museum.util.SysUtil;
+import com.pkgs.museum.service.sys.SysDictService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -19,6 +21,11 @@ import java.util.Map;
 @Slf4j
 @Service(value = "searchEventHandler")
 public class SearchEventHandler implements EventHandler {
+
+    @Resource
+    private SysDictService sysDictService;
+
+    private static final String DEF_REPLY = "We can't find:${key} for you,sorry about that.";
 
     @Override
     public Object dealWith(Map<String, String> eventMap) {
@@ -45,10 +52,10 @@ public class SearchEventHandler implements EventHandler {
      * @return String
      */
     private String getReply(String key) {
-        if (SysUtil.isEmpty(key)) {
-            return "请输入内容";
+        SysDict dictValue = sysDictService.findDictValue(key);
+        if (dictValue == null) {
+            return DEF_REPLY.replace("${key}", key);
         }
-
-        return "你输入的是: " + key;
+        return dictValue.getDictValue();
     }
 }

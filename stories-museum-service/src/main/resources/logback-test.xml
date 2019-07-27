@@ -21,6 +21,7 @@
     </appender>
 
     <logger name="org.apache.ibatis" level="INFO"/>
+    <logger name="com.pkgs.museum.mapper" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>

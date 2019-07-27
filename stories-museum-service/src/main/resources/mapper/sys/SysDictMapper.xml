@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pkgs.museum.mapper.sys.SysDictMapper">
+
+    <resultMap id="resultMap" type="com.pkgs.museum.entity.sys.SysDict">
+        <id column="id" property="id"/>
+        <id column="dict_key" property="dictKey"/>
+        <id column="dict_value" property="dictValue"/>
+        <id column="status" property="status"/>
+        <id column="remark" property="remark"/>
+    </resultMap>
+
+    <sql id="fields">
+        `id`,
+        `dict_key`,
+        `dict_value`,
+        `status`,
+        `remark`
+    </sql>
+
+    <sql id="search">
+        <where>
+            <if test="cm.id != null">
+                AND `id` = #{cm.id}
+            </if>
+            <if test="cm.status != null">
+                AND `status` = ${cm.status}
+            </if>
+            <if test="cm.dictKey != null">
+                AND `dict_key` = ${cm.dictKey}
+            </if>
+
+        </where>
+    </sql>
+
+
+    <select id="selectByMap" resultMap="resultMap">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        t_sys_dict
+        <include refid="search"/>
+    </select>
+
+
+</mapper>

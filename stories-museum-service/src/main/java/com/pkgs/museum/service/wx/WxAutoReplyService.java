@@ -2,6 +2,7 @@ package com.pkgs.museum.service.wx;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pkgs.museum.entity.wx.WxAutoReply;
+import com.pkgs.museum.enums.StatusEnum;
 import com.pkgs.museum.mapper.wx.WxAutoReplyMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class WxAutoReplyService {
 
     public List<WxAutoReply> findAutoReplyList() {
         Map<String, Object> map = new HashMap<>(1);
-        map.put("status", 1);
+        map.put("status", StatusEnum.USEFUL.getValue());
 
         Page<WxAutoReply> page = new Page<>();
 
