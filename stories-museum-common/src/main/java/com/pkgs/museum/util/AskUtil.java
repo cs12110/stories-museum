@@ -48,6 +48,7 @@ public class AskUtil {
     public static String get(String url) {
         String resultStr = null;
 
+        // client是否要关闭?
         CloseableHttpClient client = HttpClients.createDefault();
         HttpGet get = new HttpGet(url);
         setUserAgent(get);

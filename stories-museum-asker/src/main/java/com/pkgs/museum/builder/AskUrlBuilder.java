@@ -34,6 +34,7 @@ public class AskUrlBuilder {
         return accessTokenUrl.replace("${appId}", appId).replace("${appSecret}", appSecret);
     }
 
+
     /**
      * 获取关注公众号的用户url
      *
