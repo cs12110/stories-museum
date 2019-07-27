@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pkgs.museum.mapper.wx.WxAutoReplyMapper">
+
+    <resultMap id="resultMap" type="com.pkgs.museum.entity.wx.WxAutoReply">
+        <id column="id" property="id"/>
+        <id column="code" property="code"/>
+        <id column="status" property="status"/>
+        <id column="type" property="type"/>
+        <id column="seq" property="seq"/>
+        <id column="content" property="content"/>
+        <id column="media_id" property="mediaId"/>
+        <id column="url" property="url"/>
+        <id column="title" property="title"/>
+        <id column="description" property="description"/>
+        <id column="pic_url" property="picUrl"/>
+        <id column="create_by" property="createBy"/>
+        <id column="create_time" property="createTime"/>
+        <id column="update_by" property="updateBy"/>
+        <id column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="fields">
+        `id`,
+        `code`,
+        `status`,
+        `type`,
+        `seq`,
+        `content`,
+        `media_id`,
+        `url`,
+        `title`,
+        `description`,
+        `pic_url`,
+        `create_by`,
+        `create_time`,
+        `update_by`,
+        `update_time`
+    </sql>
+
+    <sql id="search">
+        <where>
+            <if test="cm.id != null">
+                AND `id` = #{cm.id}
+            </if>
+            <if test="cm.status != null">
+                AND `status` = ${cm.status}
+            </if>
+
+        </where>
+    </sql>
+
+
+    <select id="selectByMap" resultMap="resultMap">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        t_wx_auto_reply
+        <include refid="search"/>
+        ORDER BY seq ASC
+    </select>
+
+
+</mapper>
