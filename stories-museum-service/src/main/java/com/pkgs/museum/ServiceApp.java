@@ -1,6 +1,8 @@
 package com.pkgs.museum;
 
-import com.pkgs.museum.service.wx.WxAutoReplyService;
+import com.alibaba.fastjson.JSON;
+import com.pkgs.museum.entity.zhihu.AnswerEntity;
+import com.pkgs.museum.service.zhihu.ZhihuService;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +25,7 @@ public class ServiceApp {
 
 
     @Resource
-    private WxAutoReplyService wxAutoReplyService;
+    private ZhihuService zhihuService;
 
     public static void main(String[] args) {
         SpringApplication.run(ServiceApp.class, args);
@@ -33,7 +35,9 @@ public class ServiceApp {
     public void init() {
         logger.info("PostConstruct start");
 
-        wxAutoReplyService.findAutoReplyList();
+
+        AnswerEntity answer = zhihuService.getRandomTopAnswer();
+        logger.info(JSON.toJSONString(answer, true));
     }
 
 }

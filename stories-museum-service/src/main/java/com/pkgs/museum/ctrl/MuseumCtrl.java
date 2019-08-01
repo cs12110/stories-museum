@@ -1,7 +1,9 @@
 package com.pkgs.museum.ctrl;
 
 import com.alibaba.fastjson.JSON;
+import com.pkgs.museum.entity.zhihu.AnswerEntity;
 import com.pkgs.museum.handler.WxEventDispatchHandler;
+import com.pkgs.museum.service.zhihu.ZhihuService;
 import com.pkgs.museum.util.XmlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +16,6 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +35,9 @@ public class MuseumCtrl {
 
     @Resource
     private WxEventDispatchHandler handler;
+
+    @Resource
+    private ZhihuService zhihuService;
 
     /**
      * 微信公众号接入接口,与其他事件是同一个接口
@@ -57,15 +59,11 @@ public class MuseumCtrl {
             String key = parameterNames.nextElement();
             map.put(key, request.getParameter(key));
         }
-
-
         logger.info("\n{}", JSON.toJSONString(map, true));
-
         response.setCharacterEncoding("utf-8");
         try (PrintWriter writer = response.getWriter()) {
-            String feedback = try2SendMessageToStoriesMuseum(reqValue);
-            try2Write(writer, feedback);
-            //try2Write(writer, String.valueOf(map.get("echostr")));
+            String news = buildFeedbackXml(reqValue);
+            try2Write(writer, news);
         } catch (Exception e) {
             logger.error("", e);
         }
@@ -99,34 +97,52 @@ public class MuseumCtrl {
     }
 
 
-    private String try2SendMessageToStoriesMuseum(String xml) {
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
+    private String buildFeedbackXml(String xml) {
         Map<String, String> eventMap = XmlUtil.toMap(xml);
-        String toUserName = eventMap.get("FromUserName");
-        String fromUserName = eventMap.get("ToUserName");
         String content = eventMap.get("Content");
 
+        logger.info("Input:{}", content);
+        if ("next".equals(content)) {
+            return buildNewsXml(eventMap);
+        } else {
+            return buildTipsXml(eventMap);
+        }
+    }
 
-        String feedback = sdf.format(new Date()) + ",输入了: " + content;
+    private String buildNewsXml(Map<String, String> eventMap) {
+        String toUserName = eventMap.get("FromUserName");
+        String fromUserName = eventMap.get("ToUserName");
+        AnswerEntity answer = zhihuService.getRandomTopAnswer();
+        return "<xml>\n" +
+                "  <ToUserName><![CDATA[" + toUserName + "]]></ToUserName>\n" +
+                "  <FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>\n" +
+                "  <CreateTime>" + System.currentTimeMillis() + "</CreateTime>\n" +
+                "  <MsgType><![CDATA[news]]></MsgType>\n" +
+                "  <ArticleCount>1</ArticleCount>\n" +
+                "  <Articles>\n" +
+                "    <item>\n" +
+                "      <Title><![CDATA[" + answer.getQuestion() + "]]></Title>\n" +
+                "      <Description><![CDATA[" + answer.getSummary() + "]]></Description>\n" +
+                "      <PicUrl><![CDATA[" + "https://avatars3.githubusercontent.com/u/12764287" + "]]></PicUrl>\n" +
+                "      <Url><![CDATA[" + answer.getLink() + "]]></Url>\n" +
+                "    </item>\n" +
+                "  </Articles>\n" +
+                "</xml>";
+    }
 
-        String textXml = "<xml>\n" +
+
+    private String buildTipsXml(Map<String, String> eventMap) {
+        String toUserName = eventMap.get("FromUserName");
+        String fromUserName = eventMap.get("ToUserName");
+
+        String feedback = "请输入:next,获取下一个知乎高赞回答";
+        return "<xml>\n" +
                 "  <ToUserName><![CDATA[" + toUserName + "]]></ToUserName>\n" +
                 "  <FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>\n" +
                 "  <CreateTime>" + System.currentTimeMillis() + "</CreateTime>\n" +
                 "  <MsgType><![CDATA[text]]></MsgType>\n" +
                 "  <Content><![CDATA[" + feedback + "]]></Content>\n" +
                 "</xml>";
-
-        //try (PrintWriter writer = response.getWriter()) {
-        //    writer.write(textXml);
-        //    writer.flush();
-        //} catch (Exception e) {
-        //    logger.error("", e);
-        //}
-
-        return textXml;
-
     }
+
 }

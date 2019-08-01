@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pkgs.museum.mapper.TopicMapper">
+
+    <!-- resultMap -->
+    <resultMap id="resultMap" type="com.pkgs.museum.entity.zhihu.TopicEntity">
+        <result column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="data_id" property="dataId"/>
+        <result column="name" property="name"/>
+        <result column="link" property="link"/>
+        <result column="desc" property="desc"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="done" property="done"/>
+    </resultMap>
+
+    <sql id="fields">
+        `id` ,
+        `parent_id` ,
+        `data_id` ,
+        `name` ,
+        `link` ,
+        `desc` ,
+        `update_time` ,
+        `done`
+    </sql>
+
+
+    <sql id="search">
+        <where>
+            <if test="cm.id!=null and cm.id!=''">
+                AND `id` = #{cm.id}
+            </if>
+            <if test="cm.parentId!=null and cm.parentId!=''">
+                AND `parent_id` = #{cm.parentId}
+            </if>
+            <if test="cm.dataId!=null and cm.dataId!=''">
+                AND `data_id` = #{cm.dataId}
+            </if>
+            <if test="cm.name!=null and cm.name!=''">
+                AND `name`= #{cm.name}
+            </if>
+            <if test="cm.link!=null and cm.link!=''">
+                AND `link` = #{cm.link}
+            </if>
+            <if test="cm.desc!=null and cm.desc!=''">
+                AND `desc` LIKE concat('%',#{cm.desc},'%')
+            </if>
+            <if test="cm.updateTime!=null and cm.updateTime!=''">
+                AND `update_time` LIKE concat('%',#{cm.updateTime},'%')
+            </if>
+            <if test="cm.done!=null">
+                AND `done` = #{cm.done}
+            </if>
+        </where>
+    </sql>
+
+    <update id="updateDoneStatus" parameterType="java.lang.Integer">
+        UPDATE
+        topic_t
+        SET
+        done = #{status},
+        update_time = #{updateTime},
+        times = times+1
+        WHERE
+        <choose>
+            <when test="topicId != null">
+                id = #{topicId}
+            </when>
+            <otherwise>
+                parent_id IS NOT NULL
+            </otherwise>
+        </choose>
+
+    </update>
+
+
+    <insert id="save" parameterType="com.pkgs.museum.entity.zhihu.TopicEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO topic_t(
+        `parent_id` ,
+        `data_id` ,
+        `name` ,
+        `link` ,
+        `desc` ,
+        `update_time` ,
+        `done`
+        ) VALUES(
+        #{parentId},
+        #{dataId},
+        #{name},
+        #{link},
+        #{desc},
+        #{updateTime},
+        #{done}
+        )
+    </insert>
+
+    <select id="selectRemainTopicList" resultMap="resultMap">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        topic_t
+        WHERE
+        done = 0
+        AND link IS NOT NULL
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectByMap" resultMap="resultMap">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        topic_t
+        <include refid="search"/>
+    </select>
+
+    <select id="queryTopTopics" resultMap="resultMap">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        topic_t
+        WHERE
+        parent_id IS NULL
+    </select>
+
+    <select id="queryTopics" resultMap="resultMap">
+        SELECT
+        DISTINCT topic_t.*
+        FROM
+        topic_t
+        LEFT JOIN map_topic_answer_t ON topic_t.id = map_topic_answer_t.topic_id
+        WHERE
+        topic_t.parent_id = #{parent_id}
+        AND map_topic_answer_t.answer_id IS NOT NULL
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.pkgs.museum.entity.zhihu.TopicEntity">
+        SELECT
+        COUNT(*)
+        FROM
+        topic_t
+        <include refid="search"/>
+    </select>
+
+    <select id="selectChildId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        SELECT
+        id
+        FROM
+        topic_t
+        WHERE
+        1=1
+        <if test="id!=null">
+            AND parent_id = #{id}
+        </if>
+    </select>
+
+    <select id="countRemainTopic" resultType="java.lang.Integer">
+        SELECT
+        COUNT(*)
+        FROM
+        topic_t
+        WHERE
+        done = #{status}
+    </select>
+</mapper>
