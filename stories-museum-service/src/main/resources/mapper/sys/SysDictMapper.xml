@@ -24,10 +24,10 @@
                 AND `id` = #{cm.id}
             </if>
             <if test="cm.status != null">
-                AND `status` = ${cm.status}
+                AND `status` = #{cm.status}
             </if>
             <if test="cm.dictKey != null">
-                AND `dict_key` = ${cm.dictKey}
+                AND `dict_key` = #{cm.dictKey}
             </if>
 
         </where>
