@@ -35,7 +35,8 @@ public class FollowEventHandler implements EventHandler {
         log.info("{}", eventEnum);
 
         if (eventEnum == EventEnum.SUBSCRIBE) {
-            dealWithSubscribe(eventMap);
+            // dealWithSubscribe(eventMap);
+            return buildTipsXml(eventMap);
         }
 
         if (eventEnum == EventEnum.UNSUBSCRIBE) {
@@ -72,6 +73,23 @@ public class FollowEventHandler implements EventHandler {
                 }
             }
         }
+    }
+
+    private String buildTipsXml(Map<String, String> eventMap) {
+        String toUserName = eventMap.get("FromUserName");
+        String fromUserName = eventMap.get("ToUserName");
+
+        String feedback = "--- 3306 Museum ---"
+                + "\n\nJust for fun,stories museum"
+                + "\n\n输入:next";
+
+        return "<xml>\n" +
+                "  <ToUserName><![CDATA[" + toUserName + "]]></ToUserName>\n" +
+                "  <FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>\n" +
+                "  <CreateTime>" + System.currentTimeMillis() + "</CreateTime>\n" +
+                "  <MsgType><![CDATA[text]]></MsgType>\n" +
+                "  <Content><![CDATA[" + feedback + "]]></Content>\n" +
+                "</xml>";
     }
 
     /**

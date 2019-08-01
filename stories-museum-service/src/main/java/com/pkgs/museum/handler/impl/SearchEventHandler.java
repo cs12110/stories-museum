@@ -2,9 +2,11 @@ package com.pkgs.museum.handler.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.pkgs.museum.entity.sys.SysDict;
+import com.pkgs.museum.entity.zhihu.AnswerEntity;
 import com.pkgs.museum.handler.EventHandler;
 import com.pkgs.museum.handler.WxServiceHandler;
 import com.pkgs.museum.service.sys.SysDictService;
+import com.pkgs.museum.service.zhihu.ZhihuService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -25,23 +27,48 @@ public class SearchEventHandler implements EventHandler {
     @Resource
     private SysDictService sysDictService;
 
+    @Resource
+    private ZhihuService zhihuService;
+
+
     private static final String DEF_REPLY = "We can't find:${key} for you,sorry about that.";
 
     @Override
     public Object dealWith(Map<String, String> eventMap) {
-        String fromUser = eventMap.get("FromUserName");
-        String searchKey = eventMap.get("Content");
 
         // 对用户搜索内容继续回复操作
         log.info(JSON.toJSONString(eventMap, true));
+        String searchKey = eventMap.get("Content");
         log.info(searchKey);
 
 
         // 回馈用户搜索内容
-        String reply = getReply(searchKey);
-        WxServiceHandler.sendTextMessage(fromUser, reply);
+        //String reply = getReply(searchKey);
+        //WxServiceHandler.sendTextMessage(fromUser, reply);
 
-        return null;
+        return buildNewsXml(eventMap);
+    }
+
+
+    private String buildNewsXml(Map<String, String> eventMap) {
+        String toUserName = eventMap.get("FromUserName");
+        String fromUserName = eventMap.get("ToUserName");
+        AnswerEntity answer = zhihuService.getRandomTopAnswer();
+        return "<xml>\n" +
+                "  <ToUserName><![CDATA[" + toUserName + "]]></ToUserName>\n" +
+                "  <FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>\n" +
+                "  <CreateTime>" + System.currentTimeMillis() + "</CreateTime>\n" +
+                "  <MsgType><![CDATA[news]]></MsgType>\n" +
+                "  <ArticleCount>1</ArticleCount>\n" +
+                "  <Articles>\n" +
+                "    <item>\n" +
+                "      <Title><![CDATA[" + answer.getQuestion() + "]]></Title>\n" +
+                "      <Description><![CDATA[" + answer.getSummary() + "]]></Description>\n" +
+                "      <PicUrl><![CDATA[" + answer.getAuthorImg() + "]]></PicUrl>\n" +
+                "      <Url><![CDATA[" + answer.getLink() + "]]></Url>\n" +
+                "    </item>\n" +
+                "  </Articles>\n" +
+                "</xml>";
     }
 
 

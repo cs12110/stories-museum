@@ -8,6 +8,7 @@
         <result column="question_id" property="questionId"/>
         <result column="answer_id" property="answerId"/>
         <result column="author" property="author"/>
+        <result column="author_img" property="authorImg"/>
         <result column="link" property="link"/>
         <result column="upvote_num" property="upvoteNum"/>
         <result column="comment_num" property="commentNum"/>
@@ -23,6 +24,7 @@
         question_id,
         answer_id,
         author,
+        author_img,
         link,
         upvote_num,
         comment_num,
@@ -75,11 +77,12 @@
 
     <insert id="save" parameterType="com.pkgs.museum.entity.zhihu.AnswerEntity" useGeneratedKeys="true"
             keyProperty="id">
-        INSERT INTO top_answer_t(
+        INSERT INTO t_zhihu_top_answer(
         `question` ,
         `question_id` ,
         `answer_id` ,
         `author` ,
+        `author_img` ,
         `link` ,
         `upvote_num` ,
         `comment_num` ,
@@ -92,6 +95,7 @@
         #{questionId},
         #{answerId},
         #{author},
+        #{authorImg},
         #{link},
         #{upvoteNum},
         #{commentNum},
@@ -104,32 +108,32 @@
 
 
     <select id="watchdog" resultType="java.lang.Integer">
-        SELECT COUNT(1) FROM top_answer_t WHERE 1=1
+        SELECT COUNT(1) FROM t_zhihu_top_answer WHERE 1=1
     </select>
 
     <select id="selectIdByLink" resultType="java.lang.Integer">
-        SELECT id FROM top_answer_t WHERE link = #{link}
+        SELECT id FROM t_zhihu_top_answer WHERE link = #{link}
     </select>
 
     <select id="selectByMap" resultMap="resultMap">
         SELECT
         <include refid="fields"/>
         FROM
-        top_answer_t
+        t_zhihu_top_answer
         <include refid="search"/>
         ORDER BY upvote_num DESC
     </select>
 
     <select id="selectByMap1" resultMap="resultMap">
         SELECT
-        DISTINCT top_answer_t.*
+        DISTINCT t_zhihu_top_answer.*
         FROM
-        top_answer_t
-        LEFT JOIN map_topic_answer_t ON map_topic_answer_t.answer_id = top_answer_t.id
+        t_zhihu_top_answer
+        LEFT JOIN t_zhihu_topic_answer ON t_zhihu_topic_answer.answer_id = t_zhihu_top_answer.id
         WHERE
         1=1
         <if test="cm.topicIdList != null and cm.topicIdList.size > 0">
-            AND map_topic_answer_t.topic_id IN
+            AND t_zhihu_topic_answer.topic_id IN
             <foreach collection="cm.topicIdList" item="item" open="(" separator="," close=")">
                 #{item}
             </foreach>
@@ -141,14 +145,14 @@
         SELECT
         COUNT(*)
         FROM
-        top_answer_t
+        t_zhihu_top_answer
         <include refid="search"/>
     </select>
 
 
     <update id="updateVoteNum">
         UPDATE
-        top_answer_t
+        t_zhihu_top_answer
         SET
         upvote_num = #{voteNum}
         WHERE

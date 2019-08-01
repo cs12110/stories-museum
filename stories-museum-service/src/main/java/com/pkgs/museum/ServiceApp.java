@@ -34,10 +34,7 @@ public class ServiceApp {
     @PostConstruct
     public void init() {
         logger.info("PostConstruct start");
-
-
-        AnswerEntity answer = zhihuService.getRandomTopAnswer();
-        logger.info(JSON.toJSONString(answer, true));
+        // AnswerEntity answer = zhihuService.getRandomTopAnswer();
+        //logger.info(JSON.toJSONString(answer, true));
     }
-
 }

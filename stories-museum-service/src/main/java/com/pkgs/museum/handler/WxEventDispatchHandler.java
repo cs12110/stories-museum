@@ -32,19 +32,21 @@ public class WxEventDispatchHandler {
      *
      * @param xml xml
      */
-    public void dealWith(String xml) {
+    public Object dealWith(String xml) {
         Map<String, String> xmlMap = parseXml2Map(xml);
         MsgTypeEnum msgType = getMsgType(xmlMap);
 
         log.info("Message type:{}", msgType);
 
         if (msgType == MsgTypeEnum.EVENT) {
-            followEventHandler.dealWith(xmlMap);
+            return followEventHandler.dealWith(xmlMap);
         }
 
         if (msgType == MsgTypeEnum.TEXT) {
-            searchEventHandler.dealWith(xmlMap);
+            return searchEventHandler.dealWith(xmlMap);
         }
+
+        return null;
     }
 
 
