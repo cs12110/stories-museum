@@ -150,6 +150,7 @@
     </select>
 
 
+
     <update id="updateVoteNum">
         UPDATE
         t_zhihu_top_answer

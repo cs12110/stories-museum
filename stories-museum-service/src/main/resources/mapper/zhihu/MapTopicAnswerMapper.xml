@@ -31,7 +31,7 @@
 
     <insert id="save" parameterType="com.pkgs.museum.entity.zhihu.MapTopicAnswerEntity" useGeneratedKeys="true"
             keyProperty="id">
-        INSERT INTO map_topic_answer_t(
+        INSERT INTO t_zhihu_topic_answer(
         `topic_id` ,
         `answer_id`
         ) VALUES(
@@ -44,7 +44,7 @@
         SELECT
         <include refid="fields"/>
         FROM
-        map_topic_answer_t
+        t_zhihu_topic_answer
         WHERE
     </select>
 
@@ -53,7 +53,7 @@
         SELECT
         COUNT(*)
         FROM
-        map_topic_answer_t
+        t_zhihu_topic_answer
         <include refid="search"/>
     </select>
 </mapper>

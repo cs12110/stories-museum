@@ -20,6 +20,14 @@ import java.util.Map;
 public interface TopicMapper extends BaseMapper<TopicEntity> {
 
     /**
+     * 根据话题名称获取话题Id
+     *
+     * @param name 话题名称
+     * @return Integer
+     */
+    Integer queryTopTopicIdByName(@Param("name") String name);
+
+    /**
      * 保存记录
      *
      * @param topic topic

@@ -5,6 +5,7 @@ import com.pkgs.museum.enums.EventEnum;
 import com.pkgs.museum.handler.EventHandler;
 import com.pkgs.museum.handler.WxServiceHandler;
 import com.pkgs.museum.service.wx.WxAutoReplyService;
+import com.pkgs.museum.util.FeedbackXmlUtil;
 import com.pkgs.museum.util.SysUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -76,20 +77,11 @@ public class FollowEventHandler implements EventHandler {
     }
 
     private String buildTipsXml(Map<String, String> eventMap) {
-        String toUserName = eventMap.get("FromUserName");
-        String fromUserName = eventMap.get("ToUserName");
-
         String feedback = "--- 3306 Museum ---"
                 + "\n\nJust for fun,stories museum"
-                + "\n\n输入:next";
+                + "\n\n知乎高赞回答,请输入:next 查看";
 
-        return "<xml>\n" +
-                "  <ToUserName><![CDATA[" + toUserName + "]]></ToUserName>\n" +
-                "  <FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>\n" +
-                "  <CreateTime>" + System.currentTimeMillis() + "</CreateTime>\n" +
-                "  <MsgType><![CDATA[text]]></MsgType>\n" +
-                "  <Content><![CDATA[" + feedback + "]]></Content>\n" +
-                "</xml>";
+        return FeedbackXmlUtil.buildTextTipsXml(eventMap, feedback);
     }
 
     /**

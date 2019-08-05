@@ -3,14 +3,16 @@ package com.pkgs.museum.handler.impl;
 import com.alibaba.fastjson.JSON;
 import com.pkgs.museum.entity.sys.SysDict;
 import com.pkgs.museum.entity.zhihu.AnswerEntity;
+import com.pkgs.museum.entity.zhihu.TopicEntity;
 import com.pkgs.museum.handler.EventHandler;
-import com.pkgs.museum.handler.WxServiceHandler;
 import com.pkgs.museum.service.sys.SysDictService;
 import com.pkgs.museum.service.zhihu.ZhihuService;
+import com.pkgs.museum.util.FeedbackXmlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,34 +43,60 @@ public class SearchEventHandler implements EventHandler {
         String searchKey = eventMap.get("Content");
         log.info(searchKey);
 
+        if ("menu".equals(searchKey)) {
+            return dealWithMenu(eventMap);
+        }
+
+        // 根据话题来查询数据
+        if (searchKey.startsWith("#")) {
+            return dealWithAnswer(eventMap, searchKey);
+        }
 
         // 回馈用户搜索内容
         //String reply = getReply(searchKey);
         //WxServiceHandler.sendTextMessage(fromUser, reply);
 
-        return buildNewsXml(eventMap);
+        return buildRandomAnswerXml(eventMap);
     }
 
 
-    private String buildNewsXml(Map<String, String> eventMap) {
-        String toUserName = eventMap.get("FromUserName");
-        String fromUserName = eventMap.get("ToUserName");
+    private String dealWithMenu(Map<String, String> eventMap) {
+        return buildMenuXml(eventMap);
+    }
+
+
+    private String dealWithAnswer(Map<String, String> eventMap, String searchKey) {
+        String topic = searchKey.substring(1);
+        AnswerEntity answer = zhihuService.getAnswerByTopic(topic);
+
+        if (null == answer) {
+            String withoutAnyTips = "该话题:" + topic + ",没有高赞回复";
+            return FeedbackXmlUtil.buildTextTipsXml(eventMap, withoutAnyTips);
+        }
+
+        return FeedbackXmlUtil.buildZhihuAnswerFeedbackXml(eventMap, answer);
+    }
+
+    private String buildMenuXml(Map<String, String> eventMap) {
+        int index = 1;
+        StringBuilder menu = new StringBuilder();
+
+        List<TopicEntity> topicList = zhihuService.getTopicList();
+
+        menu.append("--- 知乎话题 ----");
+        for (TopicEntity topic : topicList) {
+            menu.append(index).append(". ").append(topic.getName()).append(System.lineSeparator());
+        }
+
+        menu.append("操作提示,输入: #${话题},获取相关内容");
+
+        return FeedbackXmlUtil.buildTextTipsXml(eventMap, menu.toString());
+    }
+
+
+    private String buildRandomAnswerXml(Map<String, String> eventMap) {
         AnswerEntity answer = zhihuService.getRandomTopAnswer();
-        return "<xml>\n" +
-                "  <ToUserName><![CDATA[" + toUserName + "]]></ToUserName>\n" +
-                "  <FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>\n" +
-                "  <CreateTime>" + System.currentTimeMillis() + "</CreateTime>\n" +
-                "  <MsgType><![CDATA[news]]></MsgType>\n" +
-                "  <ArticleCount>1</ArticleCount>\n" +
-                "  <Articles>\n" +
-                "    <item>\n" +
-                "      <Title><![CDATA[" + answer.getQuestion() + "]]></Title>\n" +
-                "      <Description><![CDATA[" + answer.getSummary() + "]]></Description>\n" +
-                "      <PicUrl><![CDATA[" + answer.getAuthorImg() + "]]></PicUrl>\n" +
-                "      <Url><![CDATA[" + answer.getLink() + "]]></Url>\n" +
-                "    </item>\n" +
-                "  </Articles>\n" +
-                "</xml>";
+        return FeedbackXmlUtil.buildZhihuAnswerFeedbackXml(eventMap, answer);
     }
 
 

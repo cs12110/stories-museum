@@ -3,6 +3,7 @@ package com.pkgs.museum.mapper.zhihu;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pkgs.museum.entity.zhihu.AnswerEntity;
+import com.pkgs.museum.entity.zhihu.TopicEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -67,6 +68,9 @@ public interface AnswerMapper extends BaseMapper<AnswerEntity> {
      * @return List
      */
     List<AnswerEntity> selectByMap1(Page<AnswerEntity> page, @Param("cm") Map<String, Object> columnMap);
+
+
+    List<AnswerMapper> selectByTopics(List<TopicEntity> topicList);
 
     /**
      * 更新点赞数
