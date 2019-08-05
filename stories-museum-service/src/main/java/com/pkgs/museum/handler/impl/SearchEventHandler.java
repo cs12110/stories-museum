@@ -9,6 +9,8 @@ import com.pkgs.museum.service.sys.SysDictService;
 import com.pkgs.museum.service.zhihu.ZhihuService;
 import com.pkgs.museum.util.FeedbackXmlUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -25,6 +27,8 @@ import java.util.Map;
 @Slf4j
 @Service(value = "searchEventHandler")
 public class SearchEventHandler implements EventHandler {
+
+    private static Logger logger = LoggerFactory.getLogger(SearchEventHandler.class);
 
     @Resource
     private SysDictService sysDictService;
@@ -69,8 +73,9 @@ public class SearchEventHandler implements EventHandler {
         String topic = searchKey.substring(1);
         AnswerEntity answer = zhihuService.getAnswerByTopic(topic);
 
+
         if (null == answer) {
-            String withoutAnyTips = "该话题:" + topic + ",没有高赞回复";
+            String withoutAnyTips = "话题:" + topic + ",没有高赞回复,请输入`menu`,或者`#话题`(如#篮球),";
             return FeedbackXmlUtil.buildTextTipsXml(eventMap, withoutAnyTips);
         }
 
@@ -83,12 +88,13 @@ public class SearchEventHandler implements EventHandler {
 
         List<TopicEntity> topicList = zhihuService.getTopicList();
 
-        menu.append("--- 知乎话题 ----");
+        menu.append("----- 知乎话题 -----\n");
         for (TopicEntity topic : topicList) {
             menu.append(index).append(". ").append(topic.getName()).append(System.lineSeparator());
+            index++;
         }
 
-        menu.append("操作提示,输入: #${话题},获取相关内容");
+        menu.append("操作提示,输入`#话题`获取相关内容,如#篮球");
 
         return FeedbackXmlUtil.buildTextTipsXml(eventMap, menu.toString());
     }

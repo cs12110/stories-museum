@@ -79,7 +79,7 @@ public class FollowEventHandler implements EventHandler {
     private String buildTipsXml(Map<String, String> eventMap) {
         String feedback = "--- 3306 Museum ---"
                 + "\n\nJust for fun,stories museum"
-                + "\n\n知乎高赞回答,请输入:next 查看";
+                + "\n\n知乎高赞回答,请输入`menu` 查看菜单,输入`#话题` 获取话题答案(如#篮球)";
 
         return FeedbackXmlUtil.buildTextTipsXml(eventMap, feedback);
     }
